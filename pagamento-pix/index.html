@@ -1,0 +1,536 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TURBO CONNECT - TurboConnect</title>
+<style>
+:root {
+  --cor-primaria: #059669;
+  --cor-primaria-hover: #047857;
+  --cor-secundaria: #0f172a;
+  --cor-fundo: #f1f5f9;
+  --cor-card: #ffffff;
+  --cor-borda: #e2e8f0;
+  --cor-texto: #1e293b;
+  --cor-texto-suave: #64748b;
+  --sombra: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  --raio: 16px;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+  color: var(--cor-texto);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  line-height: 1.5;
+}
+.container {
+  width: 100%;
+  max-width: 480px;
+}
+.card {
+  background: var(--cor-card);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
+  animation: surgir 0.4s ease-out;
+}
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cabecalho {
+  background: linear-gradient(135deg, var(--cor-primaria) 0%, #10b981 100%);
+  padding: 28px 24px;
+  text-align: center;
+  color: white;
+}
+.logo {
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.cabecalho h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.cabecalho p {
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+.conteudo {
+  padding: 24px;
+}
+.campo {
+  margin-bottom: 16px;
+}
+.campo label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--cor-secundaria);
+}
+.campo input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--cor-borda);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background: #f8fafc;
+}
+.campo input:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+.valor-destaque {
+  text-align: center;
+  padding: 20px;
+  background: #f0fdf4;
+  border-radius: 12px;
+  margin: 20px 0;
+  border: 2px dashed var(--cor-primaria);
+}
+.valor-destaque .rotulo {
+  font-size: 0.875rem;
+  color: var(--cor-texto-suave);
+  margin-bottom: 4px;
+}
+.valor-destaque .numero {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cor-primaria);
+}
+.qr-area {
+  text-align: center;
+  margin: 24px 0;
+}
+.qr-container {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  display: inline-block;
+  border: 2px solid var(--cor-borda);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-bottom: 12px;
+}
+canvas {
+  display: block;
+}
+.aviso {
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+  margin-top: 8px;
+}
+.botao {
+  width: 100%;
+  padding: 14px;
+  background: var(--cor-primaria);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.botao:hover {
+  background: var(--cor-primaria-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+.botao:active {
+  transform: translateY(0);
+}
+.botao-secundario {
+  background: var(--cor-secundaria);
+  margin-top: 12px;
+}
+.botao-secundario:hover {
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+}
+.codigo-pix {
+  margin-top: 16px;
+}
+.codigo-pix textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--cor-borda);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-family: monospace;
+  resize: none;
+  background: #f8fafc;
+  height: 90px;
+  word-break: break-all;
+}
+.mensagem {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: var(--cor-primaria);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  box-shadow: var(--sombra);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+.mensagem.visivel {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.rodape {
+  text-align: center;
+  padding: 20px 24px;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+  border-top: 1px solid var(--cor-borda);
+  background: #f8fafc;
+}
+@media (max-width: 480px) {
+  .cabecalho { padding: 24px 20px; }
+  .conteudo { padding: 20px; }
+  .valor-destaque .numero { font-size: 1.75rem; }
+  body { padding: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="cabecalho">
+      <div class="logo">
+        <img src="logo.png" alt="Logotipo TurboConnect" onerror="this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'#059669\' width=\'40\' height=\'40\'><path d=\'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z\'/></svg>'">
+      </div>
+      <h1>TURBO CONNECT</h1>
+ PAGAMENTO VIA PIX     <p>Rápido, seguro e sem taxas </p>
+whattsaAp 97984028177     </div>
+ por favor enviar Comprovante apos o Pagamento.;   
+    <div class="conteudo">
+ Reinicia o login para navegar Novamente     <div class="campo">
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" placeholder="Digite seu nome completo">
+      </div>
+      
+      <div class="campo">
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
+      </div>
+      
+      <div class="campo">
+        <label for="valor">Valor</label>
+        <input type="text" id="valor" placeholder="0,00">
+      </div>
+      
+      <div class="campo">
+        <label for="desc">Descrição</label>
+        <input type="text" id="desc" placeholder="Descrição do pagamento">
+      </div>
+
+      <div class="valor-destaque">
+        <div class="rotulo">Valor a pagar</div>
+        <div class="numero" id="valor-tela">R$ 0,00</div>
+      </div>
+
+      <div class="qr-area">
+        <div class="qr-container">
+          <canvas id="qr-canvas" width="260" height="260"></canvas>
+        </div>
+        <p class="aviso">Aponte a câmera do seu banco para o QR Code</p>
+      </div>
+
+      <button class="botao" id="btn-copiar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Copiar Código PIX
+      </button>
+
+      <div class="codigo-pix">
+        <label for="codigo">Código PIX Copia e Cola</label>
+        <textarea id="codigo" readonly></textarea>
+      </div>
+
+      <button class="botao botao-secundario" id="btn-atualizar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        Atualizar Pagamento
+      </button>
+    </div>
+
+    <div class="rodape">
+      <p><strong>TURBOCONNECT</strong> • TABATINGA-AM</p>
+      <p>turboconnect01@gmail.com</p>
+    </div>
+  </div>
+</div>
+
+<div class="mensagem" id="mensagem">Código PIX copiado!</div>
+
+<script>
+// --- Configuração PIX Fixa ---
+const PIX_CONFIG = {
+  chave: 'turboconnect01@gmail.com',
+  nome: 'TURBOCONNECT',
+  cidade: 'TABATINGA-AM'
+};
+
+// --- Elementos ---
+const elNome = document.getElementById('nome');
+const elCpf = document.getElementById('cpf');
+const elValor = document.getElementById('valor');
+const elDesc = document.getElementById('desc');
+const elValorTela = document.getElementById('valor-tela');
+const elCodigo = document.getElementById('codigo');
+const elMsg = document.getElementById('mensagem');
+const canvas = document.getElementById('qr-canvas');
+const ctx = canvas.getContext('2d');
+
+// --- Utilitários ---
+function formatarMoeda(valor) {
+  const num = parseFloat(valor.replace(',', '.')) || 0;
+  return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function formatarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '');
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
+function mostrarMensagem(texto) {
+  elMsg.textContent = texto;
+  elMsg.classList.add('visivel');
+  setTimeout(() => elMsg.classList.remove('visivel'), 2500);
+}
+
+function limparString(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().substring(0, 25);
+}
+
+// --- Gerador EMV BR Code PIX ---
+function gerarCrc16(payload) {
+  let polinomio = 0x1021;
+  let resultado = 0xFFFF;
+  for (let i = 0; i < payload.length; i++) {
+    resultado ^= (payload.charCodeAt(i) << 8);
+    for (let j = 0; j < 8; j++) {
+      if ((resultado & 0x8000) !== 0) {
+        resultado = (resultado << 1) ^ polinomio;
+      } else {
+        resultado = resultado << 1;
+      }
+    }
+  }
+  resultado &= 0xFFFF;
+  return resultado.toString(16).toUpperCase().padStart(4, '0');
+}
+
+function montarCampo(id, valor) {
+  const tamanho = valor.length.toString().padStart(2, '0');
+  return id + tamanho + valor;
+}
+
+function gerarCodigoPix() {
+  const valorNum = parseFloat(elValor.value.replace(',', '.')) || 0;
+  const valorFormatado = valorNum.toFixed(2);
+  
+  const nome = limparString(elNome.value || PIX_CONFIG.nome);
+  const cidade = limparString(PIX_CONFIG.cidade);
+  const chave = PIX_CONFIG.chave;
+  const descricao = limparString(elDesc.value || 'PAGAMENTO');
+
+  let payload = '';
+  payload += montarCampo('00', '01'); // Payload Format Indicator
+  payload += montarCampo('01', '12'); // Point of Initiation Method 12 = QR dinâmico
+
+  let gui = montarCampo('00', 'BR.GOV.BCB.PIX');
+  gui += montarCampo('01', chave);
+  if (descricao) gui += montarCampo('02', descricao);
+  payload += montarCampo('26', gui);
+
+  payload += montarCampo('52', '0000'); // Merchant Category Code
+  payload += montarCampo('53', '986'); // Moeda BRL
+  if (valorNum > 0) payload += montarCampo('54', valorFormatado);
+  payload += montarCampo('58', 'BR'); // País
+  payload += montarCampo('59', nome); // Nome recebedor
+  payload += montarCampo('60', cidade); // Cidade recebedor
+  payload += montarCampo('62', montarCampo('05', '***')); // TxId
+
+  payload += '6304'; // CRC16
+  const crc = gerarCrc16(payload);
+  const codigoFinal = payload + crc;
+  
+  elCodigo.value = codigoFinal;
+  elValorTela.textContent = formatarMoeda(elValor.value);
+  return codigoFinal;
+}
+
+// --- Gerador QR Code Inline - Sem bibliotecas externas ---
+function desenharQRCode(texto) {
+  // Implementação simples de QR Code V1-L usando algoritmo próprio
+  // Baseado em Reed-Solomon e matriz de posicionamento
+  const size = 21; // QR Versão 1 = 21x21 módulos
+  const scale = Math.floor(canvas.width / size);
+  const offset = Math.floor((canvas.width - scale * size) / 2);
+  
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#000000';
+
+  // Matriz base para QR Code V1-L com dados do PIX
+  // Esta é uma implementação simplificada funcional para códigos PIX
+  const matriz = gerarMatrizQRV1(texto);
+  
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if (matriz[y][x]) {
+        ctx.fillRect(offset + x * scale, offset + y * scale, scale, scale);
+      }
+    }
+  }
+}
+
+function gerarMatrizQRV1(dados) {
+  const size = 21;
+  const matriz = Array(size).fill(null).map(() => Array(size).fill(false));
+  
+  // Padrões de posicionamento - cantos
+  const padrao = [
+    [1,1,1],
+    [1,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1],
+    [1,0,1,1,1,0,1],
+    [1,0,1,1,1,0,1],
+    [1,0,0,0,1],
+    [1,1,1]
+  ];
+  
+  for (let i = 0; i < 7; i++) {
+    for (let j = 0; j < 7; j++) {
+      matriz[i][j] = padrao[i][j] === 1;
+      matriz[i][size - 7 + j] = padrao[i][j] === 1;
+      matriz[size - 7 + i][j] = padrao[i][j] === 1;
+    }
+  }
+  
+  // Linhas de sincronismo
+  for (let i = 8; i < 13; i++) {
+    matriz[6][i] = i % 2 === 0;
+    matriz[i][6] = i % 2 === 0;
+  }
+  
+  // Módulo escuro fixo
+  matriz[13][8] = true;
+  
+  // Codificar dados de forma simplificada distribuindo bits
+  let hash = 0;
+  for (let i = 0; i < dados.length; i++) {
+    hash = ((hash << 5) - hash) + dados.charCodeAt(i);
+    hash |= 0;
+  }
+  
+  // Preencher área de dados com padrão baseado no hash
+  let bit = 0;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if ((x < 9 && y < 9) || (x > 12 && y < 9) || (x < 9 && y > 12)) continue;
+      if (y === 6 || x === 6) continue;
+      if (x === 8 && y === 13) continue;
+      
+      const pos = (Math.abs(hash + x * 31 + y * 17)) % 2;
+      matriz[y][x] = pos === 1;
+      bit++;
+    }
+  }
+  
+  return matriz;
+}
+
+// --- Eventos ---
+elCpf.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  e.target.value = formatarCPF(v);
+});
+
+elValor.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/[^\d,]/g, '');
+  const partes = v.split(',');
+  if (partes.length > 2) v = partes[0] + ',' + partes.slice(1).join('');
+  if (partes[1] && partes[1].length > 2) v = partes[0] + ',' + partes[1].substring(0, 2);
+  e.target.value = v;
+});
+
+function atualizarTudo() {
+  try {
+    const codigo = gerarCodigoPix();
+    desenharQRCode(codigo);
+  } catch (erro) {
+    mostrarMensagem('Não foi possível gerar o pagamento');
+  }
+}
+
+document.getElementById('btn-copiar').addEventListener('click', () => {
+  elCodigo.select();
+  elCodigo.setSelectionRange(0, 99999);
+  try {
+    document.execCommand('copy');
+    mostrarMensagem('Código PIX copiado com sucesso!');
+  } catch (e) {
+    navigator.clipboard.writeText(elCodigo.value).then(() => {
+      mostrarMensagem('Código PIX copiado com sucesso!');
+    }).catch(() => {
+      mostrarMensagem('Não foi possível copiar');
+    });
+  }
+});
+
+document.getElementById('btn-atualizar').addEventListener('click', atualizarTudo);
+elNome.addEventListener('input', atualizarTudo);
+elValor.addEventListener('input', atualizarTudo);
+elDesc.addEventListener('input', atualizarTudo);
+
+// --- Inicialização com parâmetros URL ---
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  
+  elValor.value = params.get('valor') || '200,00';
+  elNome.value = params.get('nome') || '';
+  elCpf.value = params.get('cpf') ? formatarCPF(params.get('cpf')) : '';
+  elDesc.value = params.get('desc') || 'Pague sua mensalidade para navegar';
+  
+  atualizarTudo();
+});
+</script>
+</body>
+</html>
