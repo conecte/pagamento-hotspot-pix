@@ -13,12 +13,12 @@
   --cor-borda: #e2e8f0;
   --cor-texto: #1e293b;
   --cor-texto-suave: #64748b;
-  --sombra: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  --sombra: 0 10px 15px -3px rgba(0,0,0,0.1);
   --raio: 16px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
   background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
   color: var(--cor-texto);
   min-height: 100vh;
@@ -26,7 +26,6 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  line-height: 1.5;
 }
 .container { width: 100%; max-width: 480px; }
 .card {
@@ -71,7 +70,6 @@ body {
   border: 2px solid var(--cor-borda);
   border-radius: 12px;
   font-size: 1rem;
-  transition: all 0.2s;
   background: #f8fafc;
 }
 .campo input:focus {
@@ -107,11 +105,10 @@ body {
   justify-content: center;
   align-items: center;
   border: 2px solid var(--cor-borda);
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
   margin: 0 auto 12px;
   width: fit-content;
-  min-height: 360px;
-  min-width: 360px;
+  min-width: 320px;
+  min-height: 320px;
 }
 #qr-canvas img { display: block; }
 .aviso { font-size: 0.8rem; color: var(--cor-texto-suave); margin-top: 8px; }
@@ -125,18 +122,15 @@ body {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-}
-.botao:hover { background: var(--cor-primaria-hover); transform: translateY(-1px); }
-.botao-pago {
-  background: #3b82f6;
   margin-top: 12px;
 }
+.botao:hover { background: var(--cor-primaria-hover); }
+.botao-pago { background: #3b82f6; }
 .botao-pago:hover { background: #2563eb; }
 .instrucao-comprovante {
   background: #eff6ff;
@@ -145,7 +139,6 @@ body {
   border-radius: 12px;
   margin: 20px 0;
   font-size: 0.9rem;
-  text-align: left;
 }
 .instrucao-comprovante strong { color: #1e40af; display: block; margin-bottom: 8px; }
 .instrucao-comprovante ol { padding-left: 20px; margin: 0; }
@@ -190,12 +183,6 @@ body {
   border-top: 1px solid var(--cor-borda);
   background: #f8fafc;
 }
-@media (max-width: 480px) {
-.cabecalho { padding: 24px 20px; }
-.conteudo { padding: 20px; }
-.valor-destaque.numero { font-size: 1.75rem; }
-body { padding: 12px; }
-}
 </style>
 </head>
 <body>
@@ -203,16 +190,16 @@ body { padding: 12px; }
   <div class="card">
     <div class="cabecalho">
       <div class="logo">
-        <img src="logo.png" alt="Logotipo TurboConnect" onerror="this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'#059669\' width=\'40\' height=\'40\'><path d=\'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z\'/></svg>'">
+        <img src="logo.png" alt="Logo" onerror="this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'#059669\' width=\'40\' height=\'40\'><path d=\'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z\'/></svg>'">
       </div>
       <h1>TURBO CONNECT</h1>
-      <p>PAGAMENTO VIA PIX - Rápido e seguro</p>
+      <p>PAGAMENTO VIA PIX</p>
     </div>
 
     <div class="conteudo">
       <div class="campo">
         <label for="nome">Nome completo</label>
-        <input type="text" id="nome" placeholder="Digite seu nome completo">
+        <input type="text" id="nome" placeholder="Digite seu nome">
       </div>
 
       <div class="campo" id="campo-valor">
@@ -238,7 +225,6 @@ body { padding: 12px; }
       </div>
 
       <button class="botao" id="btn-copiar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
         Copiar Código PIX
       </button>
 
@@ -246,14 +232,13 @@ body { padding: 12px; }
         <strong>📸 Como enviar o comprovante:</strong>
         <ol>
           <li>Pague no app do seu banco</li>
-          <li>Na tela "Pagamento concluído", tire um PRINT</li>
-          <li>Clique no botão azul abaixo "Já Paguei"</li>
-          <li>Anexe o print e envie no WhatsApp</li>
+          <li>Tire PRINT da tela "Pagamento concluído"</li>
+          <li>Clique em "Já Paguei" abaixo</li>
+          <li>Anexe o print no WhatsApp</li>
         </ol>
       </div>
 
       <a class="botao botao-pago" id="btn-pago" target="_blank">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         Já Paguei - Enviar Comprovante
       </a>
 
@@ -292,7 +277,8 @@ const btnPago = document.getElementById('btn-pago');
 const campoValor = document.getElementById('campo-valor');
 
 function formatarMoeda(valor) {
-  const num = parseFloat(valor.toString().replace(',', '.')) || 0;
+  let num = parseFloat(valor.toString().replace(',', '.'));
+  if (isNaN(num)) num = 0;
   return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
@@ -329,11 +315,11 @@ function montarCampo(id, valor) {
 }
 
 function gerarCodigoPix() {
-  // CORRIGIDO: Aceita 3, 3.00, 3,00
   let valorStr = elValor.value.toString().replace(',', '.');
-  const valorNum = parseFloat(valorStr) || 0;
-  const valorFormatado = valorNum.toFixed(2);
+  let valorNum = parseFloat(valorStr);
+  if (isNaN(valorNum) || valorNum <= 0) valorNum = 0;
 
+  const valorFormatado = valorNum.toFixed(2);
   const nome = limparString(elNome.value || PIX_CONFIG.nome);
   const cidade = limparString(PIX_CONFIG.cidade);
   const chave = PIX_CONFIG.chave;
@@ -367,7 +353,7 @@ function gerarCodigoPix() {
 
   const nomeCliente = elNome.value || 'Cliente';
   const valorMsg = formatarMoeda(valorNum);
-  const msg = *PAGAMENTO PIX REALIZADO*%0A%0A*Nome:* ${nomeCliente}%0A*Valor:* ${valorMsg}%0A%0A_Por favor, anexe o print do comprovante do seu banco aqui na conversa._%0A%0AObrigado!;
+  const msg = *PAGAMENTO PIX REALIZADO*%0A%0A*Nome:* ${nomeCliente}%0A*Valor:* ${valorMsg}%0A%0A_Por favor, anexe o print do comprovante do seu banco aqui._%0A%0AObrigado!;
   btnPago.href = https://wa.me/${PIX_CONFIG.whatsapp}?text=${msg};
 
   return codigoFinal;
@@ -375,15 +361,19 @@ function gerarCodigoPix() {
 
 function desenharQRCode(texto) {
   qrContainer.innerHTML = "";
-  if (!texto || texto.length < 10) return;
-  new QRCode(qrContainer, {
-    text: texto,
-    width: 320,
-    height: 320,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.M
-  });
+  if (!texto || texto.length < 20) return;
+  try {
+    new QRCode(qrContainer, {
+      text: texto,
+      width: 320,
+      height: 320,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {
+    console.log('Erro QR:', e);
+  }
 }
 
 elValor.addEventListener('input', (e) => {
@@ -396,12 +386,8 @@ elValor.addEventListener('input', (e) => {
 });
 
 function atualizarTudo() {
-  try {
-    const codigo = gerarCodigoPix();
-    desenharQRCode(codigo);
-  } catch (erro) {
-    console.log('Erro:', erro);
-  }
+  const codigo = gerarCodigoPix();
+  desenharQRCode(codigo);
 }
 
 document.getElementById('btn-copiar').addEventListener('click', () => {
@@ -409,10 +395,10 @@ document.getElementById('btn-copiar').addEventListener('click', () => {
   elCodigo.setSelectionRange(0, 99999);
   try {
     document.execCommand('copy');
-    mostrarMensagem('Código PIX copiado com sucesso!');
+    mostrarMensagem('Código PIX copiado!');
   } catch (e) {
     navigator.clipboard.writeText(elCodigo.value).then(() => {
-      mostrarMensagem('Código PIX copiado com sucesso!');
+      mostrarMensagem('Código PIX copiado!');
     });
   }
 });
@@ -420,26 +406,25 @@ document.getElementById('btn-copiar').addEventListener('click', () => {
 elNome.addEventListener('input', atualizarTudo);
 elDesc.addEventListener('input', atualizarTudo);
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
   const params = new URLSearchParams(window.location.search);
   const valorURL = params.get('valor');
 
-  // CORRIGIDO: Aceita?valor=3 ou?valor=3.00 ou?valor=3,00
   if (valorURL) {
     let valorLimpo = valorURL.replace(',', '.');
     elValor.value = valorLimpo;
-    // Trava o campo quando vem da URL
     elValor.readOnly = true;
     elValor.style.background = '#e5e7eb';
     elValor.style.cursor = 'not-allowed';
-    campoValor.style.display = 'none'; // Esconde o campo
+    campoValor.style.display = 'none';
   } else {
     elValor.value = '0,00';
   }
 
   elNome.value = params.get('nome') || '';
   elDesc.value = params.get('desc') || 'Mensalidade Internet';
-  atualizarTudo();
+
+  setTimeout(atualizarTudo, 100);
 });
 </script>
 </body>
