@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TURBO CONNECT - TurboConnect</title>
+<title>TURBO CONNECT - Pagamento Pix</title>
 <style>
 :root {
   --cor-primaria: #059669;
   --cor-primaria-hover: #047857;
   --cor-secundaria: #0f172a;
-  --cor-fundo: #f1f5f9;
   --cor-card: #ffffff;
   --cor-borda: #e2e8f0;
   --cor-texto: #1e293b;
@@ -17,11 +16,7 @@
   --sombra: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
   --raio: 16px;
 }
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
@@ -33,10 +28,7 @@ body {
   padding: 20px;
   line-height: 1.5;
 }
-.container {
-  width: 100%;
-  max-width: 480px;
-}
+.container { width: 100%; max-width: 480px; }
 .card {
   background: var(--cor-card);
   border-radius: var(--raio);
@@ -66,26 +58,11 @@ body {
   justify-content: center;
   padding: 8px;
 }
-.logo img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-.cabecalho h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.cabecalho p {
-  opacity: 0.9;
-  font-size: 0.95rem;
-}
-.conteudo {
-  padding: 24px;
-}
-.campo {
-  margin-bottom: 16px;
-}
+.logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.cabecalho h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+.cabecalho p { opacity: 0.9; font-size: 0.95rem; }
+.conteudo { padding: 24px; }
+.campo { margin-bottom: 16px; }
 .campo label {
   display: block;
   font-size: 0.875rem;
@@ -126,27 +103,21 @@ body {
   font-weight: 800;
   color: var(--cor-primaria);
 }
-.qr-area {
-  text-align: center;
-  margin: 24px 0;
-}
+.qr-area { text-align: center; margin: 24px 0; }
 .qr-container {
   background: white;
   padding: 20px;
   border-radius: 16px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 2px solid var(--cor-borda);
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  margin-bottom: 12px;
+  margin: 0 auto 12px;
+  width: fit-content;
 }
-#qr-canvas img {
-  display: block;
-}
-.aviso {
-  font-size: 0.8rem;
-  color: var(--cor-texto-suave);
-  margin-top: 8px;
-}
+#qr-canvas img { display: block; }
+.aviso { font-size: 0.8rem; color: var(--cor-texto-suave); margin-top: 8px; }
 .botao {
   width: 100%;
   padding: 14px;
@@ -162,26 +133,42 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-decoration: none;
 }
 .botao:hover {
   background: var(--cor-primaria-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
 }
-.botao:active {
-  transform: translateY(0);
-}
-.botao-secundario {
-  background: var(--cor-secundaria);
+.botao-whatsapp {
+  background: #25D366;
   margin-top: 12px;
 }
-.botao-secundario:hover {
-  background: #1e293b;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+.botao-whatsapp:hover {
+  background: #128C7E;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
 }
-.codigo-pix {
-  margin-top: 16px;
+.botao-pago {
+  background: #3b82f6;
+  margin-top: 12px;
 }
+.botao-pago:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+.instrucao-comprovante {
+  background: #eff6ff;
+  border: 2px solid #3b82f6;
+  padding: 15px;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.instrucao-comprovante strong { color: #1e40af; display: block; margin-bottom: 8px; }
+.instrucao-comprovante ol { padding-left: 20px; margin: 0; }
+.instrucao-comprovante li { margin-bottom: 5px; }
+.codigo-pix { margin-top: 16px; }
 .codigo-pix textarea {
   width: 100%;
   padding: 12px;
@@ -225,7 +212,7 @@ body {
 .cabecalho { padding: 24px 20px; }
 .conteudo { padding: 20px; }
 .valor-destaque.numero { font-size: 1.75rem; }
-  body { padding: 12px; }
+body { padding: 12px; }
 }
 </style>
 </head>
@@ -237,18 +224,13 @@ body {
         <img src="logo.png" alt="Logotipo TurboConnect" onerror="this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'#059669\' width=\'40\' height=\'40\'><path d=\'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z\'/></svg>'">
       </div>
       <h1>TURBO CONNECT</h1>
- PAGAMENTO VIA PIX <p>Rápido, seguro e sem taxas </p>
-whattsaAp 97984028177 </div>
- por favor enviar Comprovante apos o Pagamento.;
+      <p>PAGAMENTO VIA PIX - Rápido e seguro</p>
+    </div>
+
     <div class="conteudo">
- Reinicia o login para navegar Novamente <div class="campo">
+      <div class="campo">
         <label for="nome">Nome completo</label>
         <input type="text" id="nome" placeholder="Digite seu nome completo">
-      </div>
-
-      <div class="campo">
-        <label for="cpf">CPF</label>
-        <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
       </div>
 
       <div class="campo">
@@ -258,7 +240,7 @@ whattsaAp 97984028177 </div>
 
       <div class="campo">
         <label for="desc">Descrição</label>
-        <input type="text" id="desc" placeholder="Descrição do pagamento">
+        <input type="text" id="desc" placeholder="Mensalidade Internet">
       </div>
 
       <div class="valor-destaque">
@@ -278,20 +260,30 @@ whattsaAp 97984028177 </div>
         Copiar Código PIX
       </button>
 
+      <div class="instrucao-comprovante">
+        <strong>📸 Como enviar o comprovante:</strong>
+        <ol>
+          <li>Pague no app do seu banco</li>
+          <li>Na tela de "Pagamento concluído", tire um PRINT</li>
+          <li>Clique no botão azul abaixo "Já Paguei"</li>
+          <li>Anexe o print e envie no WhatsApp</li>
+        </ol>
+      </div>
+
+      <a class="botao botao-pago" id="btn-pago" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Já Paguei - Enviar Comprovante
+      </a>
+
       <div class="codigo-pix">
         <label for="codigo">Código PIX Copia e Cola</label>
         <textarea id="codigo" readonly></textarea>
       </div>
-
-      <button class="botao botao-secundario" id="btn-atualizar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-        Atualizar Pagamento
-      </button>
     </div>
 
     <div class="rodape">
       <p><strong>TURBOCONNECT</strong> • TABATINGA-AM</p>
-      <p>turboconnect01@gmail.com</p>
+      <p>turboconnect01@gmail.com • 97 98402-8177</p>
     </div>
   </div>
 </div>
@@ -300,33 +292,25 @@ whattsaAp 97984028177 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-// --- Configuração PIX Fixa ---
 const PIX_CONFIG = {
   chave: 'turboconnect01@gmail.com',
   nome: 'TURBO CONNECT',
-  cidade: 'TABATINGA'
+  cidade: 'TABATINGA',
+  whatsapp: '5597984028177'
 };
 
-// --- Elementos ---
 const elNome = document.getElementById('nome');
-const elCpf = document.getElementById('cpf');
 const elValor = document.getElementById('valor');
 const elDesc = document.getElementById('desc');
 const elValorTela = document.getElementById('valor-tela');
 const elCodigo = document.getElementById('codigo');
 const elMsg = document.getElementById('mensagem');
 const qrContainer = document.getElementById('qr-canvas');
-let qrcodeObj = null;
+const btnPago = document.getElementById('btn-pago');
 
-// --- Utilitários ---
 function formatarMoeda(valor) {
   const num = parseFloat(valor.replace(',', '.')) || 0;
   return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-function formatarCPF(cpf) {
-  cpf = cpf.replace(/\D/g, '');
-  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
 function mostrarMensagem(texto) {
@@ -339,7 +323,6 @@ function limparString(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().substring(0, 25);
 }
 
-// --- Gerador EMV BR Code PIX CORRIGIDO ---
 function gerarCrc16(payload) {
   let polinomio = 0x1021;
   let resultado = 0xFFFF;
@@ -373,7 +356,6 @@ function gerarCodigoPix() {
 
   let payload = '';
   payload += montarCampo('00', '01');
-  // CORREÇÃO: 11 = QR estático reutilizável. 12 é pra QR dinâmico com banco
   payload += montarCampo('01', '11');
 
   let gui = montarCampo('00', 'BR.GOV.BCB.PIX');
@@ -388,7 +370,6 @@ function gerarCodigoPix() {
   payload += montarCampo('59', nome);
   payload += montarCampo('60', cidade);
 
-  // CORREÇÃO: TxId válido. Alguns bancos rejeitam *
   const txid = Date.now().toString().substring(0, 25);
   payload += montarCampo('62', montarCampo('05', txid));
 
@@ -398,13 +379,19 @@ function gerarCodigoPix() {
 
   elCodigo.value = codigoFinal;
   elValorTela.textContent = formatarMoeda(elValor.value);
+
+  // Atualiza link do botão "Já Paguei"
+  const nomeCliente = elNome.value || 'Cliente';
+  const valorMsg = formatarMoeda(elValor.value);
+  const msg = *PAGAMENTO PIX REALIZADO*%0A%0A*Nome:* ${nomeCliente}%0A*Valor:* ${valorMsg}%0A%0A_Por favor, anexe o print do comprovante do seu banco aqui na conversa._%0A%0AObrigado!;
+  btnPago.href = https://wa.me/${PIX_CONFIG.whatsapp}?text=${msg};
+
   return codigoFinal;
 }
 
-// --- QR Code CORRIGIDO ---
 function desenharQRCode(texto) {
   qrContainer.innerHTML = "";
-  qrcodeObj = new QRCode(qrContainer, {
+  new QRCode(qrContainer, {
     text: texto,
     width: 320,
     height: 320,
@@ -413,12 +400,6 @@ function desenharQRCode(texto) {
     correctLevel: QRCode.CorrectLevel.M
   });
 }
-
-// --- Eventos ---
-elCpf.addEventListener('input', (e) => {
-  let v = e.target.value.replace(/\D/g, '');
-  e.target.value = formatarCPF(v);
-});
 
 elValor.addEventListener('input', (e) => {
   let v = e.target.value.replace(/[^\d,]/g, '');
@@ -452,20 +433,15 @@ document.getElementById('btn-copiar').addEventListener('click', () => {
   }
 });
 
-document.getElementById('btn-atualizar').addEventListener('click', atualizarTudo);
 elNome.addEventListener('input', atualizarTudo);
 elValor.addEventListener('input', atualizarTudo);
 elDesc.addEventListener('input', atualizarTudo);
 
-// --- Inicialização com parâmetros URL ---
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-
   elValor.value = params.get('valor') || '200,00';
   elNome.value = params.get('nome') || '';
-  elCpf.value = params.get('cpf')? formatarCPF(params.get('cpf')) : '';
-  elDesc.value = params.get('desc') || 'Pague sua mensalidade para navegar';
-
+  elDesc.value = params.get('desc') || 'Mensalidade Internet';
   atualizarTudo();
 });
 </script>
