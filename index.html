@@ -134,10 +134,13 @@ body {
   background: white;
   padding: 20px;
   border-radius: 16px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 2px solid var(--cor-borda);
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  margin-bottom: 12px;
+  margin: 0 auto 12px;
+  width: fit-content;
 }
 #qr-canvas img {
   display: block;
@@ -221,6 +224,42 @@ body {
   border-top: 1px solid var(--cor-borda);
   background: #f8fafc;
 }
+/* TABELA DE INSTRUÇÃO NOVA */
+.tabela-instrucao {
+  background: #fef3c7;
+  border: 2px solid #f59e0b;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+}
+.tabela-instrucao h3 {
+  color: #92400e;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.tabela-instrucao ol {
+  padding-left: 20px;
+  margin: 0;
+}
+.tabela-instrucao li {
+  margin-bottom: 8px;
+  color: #78350f;
+}
+.tabela-instrucao.exemplo-msg {
+  background: white;
+  border: 1px dashed #f59e0b;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+.tabela-instrucao.exemplo-msg strong {
+  color: #059669;
+  display: block;
+  margin-bottom: 4px;
+}
 @media (max-width: 480px) {
 .cabecalho { padding: 24px 20px; }
 .conteudo { padding: 20px; }
@@ -283,6 +322,21 @@ whattsaAp 97984028177 </div>
         <textarea id="codigo" readonly></textarea>
       </div>
 
+      <!-- TABELA DE INSTRUÇÃO NOVA -->
+      <div class="tabela-instrucao">
+        <h3>📱 IMPORTANTE: Depois de Pagar</h3>
+        <ol>
+          <li>Após pagar no banco, tire um PRINT do comprovante</li>
+          <li>Volte na tela de login do Hotspot</li>
+          <li>Anexe o PRINT e envie a mensagem abaixo no WhatsApp:</li>
+        </ol>
+        <div class="exemplo-msg">
+          <strong>COPIE E ENVIE ESTA MENSAGEM:</strong>
+          Olá! Comprei voucher de R$ <span id="valor-exemplo">5,00</span> - 3 horas.<br>
+          Me envia por favor o código de acesso à internet.
+        </div>
+      </div>
+
       <button class="botao botao-secundario" id="btn-atualizar">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
         Atualizar Pagamento
@@ -313,6 +367,7 @@ const elCpf = document.getElementById('cpf');
 const elValor = document.getElementById('valor');
 const elDesc = document.getElementById('desc');
 const elValorTela = document.getElementById('valor-tela');
+const elValorExemplo = document.getElementById('valor-exemplo');
 const elCodigo = document.getElementById('codigo');
 const elMsg = document.getElementById('mensagem');
 const qrContainer = document.getElementById('qr-canvas');
@@ -373,7 +428,6 @@ function gerarCodigoPix() {
 
   let payload = '';
   payload += montarCampo('00', '01');
-  // CORREÇÃO: 11 = QR estático reutilizável. 12 é pra QR dinâmico com banco
   payload += montarCampo('01', '11');
 
   let gui = montarCampo('00', 'BR.GOV.BCB.PIX');
@@ -388,7 +442,6 @@ function gerarCodigoPix() {
   payload += montarCampo('59', nome);
   payload += montarCampo('60', cidade);
 
-  // CORREÇÃO: TxId válido. Alguns bancos rejeitam *
   const txid = Date.now().toString().substring(0, 25);
   payload += montarCampo('62', montarCampo('05', txid));
 
@@ -398,6 +451,7 @@ function gerarCodigoPix() {
 
   elCodigo.value = codigoFinal;
   elValorTela.textContent = formatarMoeda(elValor.value);
+  elValorExemplo.textContent = formatarMoeda(elValor.value).replace('R$ ', '');
   return codigoFinal;
 }
 
