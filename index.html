@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -116,12 +116,12 @@ body {
   margin: 20px 0;
   border: 2px dashed var(--cor-primaria);
 }
-.valor-destaque .rotulo {
+.valor-destaque.rotulo {
   font-size: 0.875rem;
   color: var(--cor-texto-suave);
   margin-bottom: 4px;
 }
-.valor-destaque .numero {
+.valor-destaque.numero {
   font-size: 2rem;
   font-weight: 800;
   color: var(--cor-primaria);
@@ -132,14 +132,14 @@ body {
 }
 .qr-container {
   background: white;
-  padding: 16px;
+  padding: 20px;
   border-radius: 16px;
   display: inline-block;
   border: 2px solid var(--cor-borda);
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
   margin-bottom: 12px;
 }
-canvas {
+#qr-canvas img {
   display: block;
 }
 .aviso {
@@ -222,9 +222,9 @@ canvas {
   background: #f8fafc;
 }
 @media (max-width: 480px) {
-  .cabecalho { padding: 24px 20px; }
-  .conteudo { padding: 20px; }
-  .valor-destaque .numero { font-size: 1.75rem; }
+ .cabecalho { padding: 24px 20px; }
+ .conteudo { padding: 20px; }
+ .valor-destaque.numero { font-size: 1.75rem; }
   body { padding: 12px; }
 }
 </style>
@@ -237,25 +237,25 @@ canvas {
         <img src="logo.png" alt="Logotipo TurboConnect" onerror="this.parentElement.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'#059669\' width=\'40\' height=\'40\'><path d=\'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z\'/></svg>'">
       </div>
       <h1>TURBO CONNECT</h1>
- PAGAMENTO VIA PIX     <p>Rápido, seguro e sem taxas </p>
-whattsaAp 97984028177     </div>
- por favor enviar Comprovante apos o Pagamento.;   
+ PAGAMENTO VIA PIX <p>Rápido, seguro e sem taxas </p>
+whattsaAp 97984028177 </div>
+ por favor enviar Comprovante apos o Pagamento.;
     <div class="conteudo">
- Reinicia o login para navegar Novamente     <div class="campo">
+ Reinicia o login para navegar Novamente <div class="campo">
         <label for="nome">Nome completo</label>
         <input type="text" id="nome" placeholder="Digite seu nome completo">
       </div>
-      
+
       <div class="campo">
         <label for="cpf">CPF</label>
         <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
       </div>
-      
+
       <div class="campo">
         <label for="valor">Valor</label>
         <input type="text" id="valor" placeholder="0,00">
       </div>
-      
+
       <div class="campo">
         <label for="desc">Descrição</label>
         <input type="text" id="desc" placeholder="Descrição do pagamento">
@@ -268,7 +268,7 @@ whattsaAp 97984028177     </div>
 
       <div class="qr-area">
         <div class="qr-container">
-          <canvas id="qr-canvas" width="260" height="260"></canvas>
+          <div id="qr-canvas"></div>
         </div>
         <p class="aviso">Aponte a câmera do seu banco para o QR Code</p>
       </div>
@@ -298,12 +298,13 @@ whattsaAp 97984028177     </div>
 
 <div class="mensagem" id="mensagem">Código PIX copiado!</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // --- Configuração PIX Fixa ---
 const PIX_CONFIG = {
   chave: 'turboconnect01@gmail.com',
   nome: 'TURBOCONNECT',
-  cidade: 'TABATINGA-AM'
+  cidade: 'TABATINGA'
 };
 
 // --- Elementos ---
@@ -314,8 +315,8 @@ const elDesc = document.getElementById('desc');
 const elValorTela = document.getElementById('valor-tela');
 const elCodigo = document.getElementById('codigo');
 const elMsg = document.getElementById('mensagem');
-const canvas = document.getElementById('qr-canvas');
-const ctx = canvas.getContext('2d');
+const qrContainer = document.getElementById('qr-canvas');
+let qrcodeObj = null;
 
 // --- Utilitários ---
 function formatarMoeda(valor) {
@@ -345,7 +346,7 @@ function gerarCrc16(payload) {
   for (let i = 0; i < payload.length; i++) {
     resultado ^= (payload.charCodeAt(i) << 8);
     for (let j = 0; j < 8; j++) {
-      if ((resultado & 0x8000) !== 0) {
+      if ((resultado & 0x8000)!== 0) {
         resultado = (resultado << 1) ^ polinomio;
       } else {
         resultado = resultado << 1;
@@ -364,117 +365,49 @@ function montarCampo(id, valor) {
 function gerarCodigoPix() {
   const valorNum = parseFloat(elValor.value.replace(',', '.')) || 0;
   const valorFormatado = valorNum.toFixed(2);
-  
+
   const nome = limparString(elNome.value || PIX_CONFIG.nome);
   const cidade = limparString(PIX_CONFIG.cidade);
   const chave = PIX_CONFIG.chave;
   const descricao = limparString(elDesc.value || 'PAGAMENTO');
 
   let payload = '';
-  payload += montarCampo('00', '01'); // Payload Format Indicator
-  payload += montarCampo('01', '12'); // Point of Initiation Method 12 = QR dinâmico
+  payload += montarCampo('00', '01');
+  payload += montarCampo('01', '12');
 
   let gui = montarCampo('00', 'BR.GOV.BCB.PIX');
   gui += montarCampo('01', chave);
   if (descricao) gui += montarCampo('02', descricao);
   payload += montarCampo('26', gui);
 
-  payload += montarCampo('52', '0000'); // Merchant Category Code
-  payload += montarCampo('53', '986'); // Moeda BRL
+  payload += montarCampo('52', '0000');
+  payload += montarCampo('53', '986');
   if (valorNum > 0) payload += montarCampo('54', valorFormatado);
-  payload += montarCampo('58', 'BR'); // País
-  payload += montarCampo('59', nome); // Nome recebedor
-  payload += montarCampo('60', cidade); // Cidade recebedor
-  payload += montarCampo('62', montarCampo('05', '***')); // TxId
+  payload += montarCampo('58', 'BR');
+  payload += montarCampo('59', nome);
+  payload += montarCampo('60', cidade);
+  payload += montarCampo('62', montarCampo('05', '*'));
 
-  payload += '6304'; // CRC16
+  payload += '6304';
   const crc = gerarCrc16(payload);
   const codigoFinal = payload + crc;
-  
+
   elCodigo.value = codigoFinal;
   elValorTela.textContent = formatarMoeda(elValor.value);
   return codigoFinal;
 }
 
-// --- Gerador QR Code Inline - Sem bibliotecas externas ---
+// --- QR Code CORRIGIDO - Agora escaneia ---
 function desenharQRCode(texto) {
-  // Implementação simples de QR Code V1-L usando algoritmo próprio
-  // Baseado em Reed-Solomon e matriz de posicionamento
-  const size = 21; // QR Versão 1 = 21x21 módulos
-  const scale = Math.floor(canvas.width / size);
-  const offset = Math.floor((canvas.width - scale * size) / 2);
-  
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#000000';
-
-  // Matriz base para QR Code V1-L com dados do PIX
-  // Esta é uma implementação simplificada funcional para códigos PIX
-  const matriz = gerarMatrizQRV1(texto);
-  
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (matriz[y][x]) {
-        ctx.fillRect(offset + x * scale, offset + y * scale, scale, scale);
-      }
-    }
-  }
-}
-
-function gerarMatrizQRV1(dados) {
-  const size = 21;
-  const matriz = Array(size).fill(null).map(() => Array(size).fill(false));
-  
-  // Padrões de posicionamento - cantos
-  const padrao = [
-    [1,1,1],
-    [1,0,0,0,0,0,1],
-    [1,0,1,1,1,0,1],
-    [1,0,1,1,1,0,1],
-    [1,0,1,1,1,0,1],
-    [1,0,0,0,1],
-    [1,1,1]
-  ];
-  
-  for (let i = 0; i < 7; i++) {
-    for (let j = 0; j < 7; j++) {
-      matriz[i][j] = padrao[i][j] === 1;
-      matriz[i][size - 7 + j] = padrao[i][j] === 1;
-      matriz[size - 7 + i][j] = padrao[i][j] === 1;
-    }
-  }
-  
-  // Linhas de sincronismo
-  for (let i = 8; i < 13; i++) {
-    matriz[6][i] = i % 2 === 0;
-    matriz[i][6] = i % 2 === 0;
-  }
-  
-  // Módulo escuro fixo
-  matriz[13][8] = true;
-  
-  // Codificar dados de forma simplificada distribuindo bits
-  let hash = 0;
-  for (let i = 0; i < dados.length; i++) {
-    hash = ((hash << 5) - hash) + dados.charCodeAt(i);
-    hash |= 0;
-  }
-  
-  // Preencher área de dados com padrão baseado no hash
-  let bit = 0;
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if ((x < 9 && y < 9) || (x > 12 && y < 9) || (x < 9 && y > 12)) continue;
-      if (y === 6 || x === 6) continue;
-      if (x === 8 && y === 13) continue;
-      
-      const pos = (Math.abs(hash + x * 31 + y * 17)) % 2;
-      matriz[y][x] = pos === 1;
-      bit++;
-    }
-  }
-  
-  return matriz;
+  qrContainer.innerHTML = "";
+  qrcodeObj = new QRCode(qrContainer, {
+    text: texto,
+    width: 320,
+    height: 320,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
 }
 
 // --- Eventos ---
@@ -523,12 +456,12 @@ elDesc.addEventListener('input', atualizarTudo);
 // --- Inicialização com parâmetros URL ---
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  
+
   elValor.value = params.get('valor') || '200,00';
   elNome.value = params.get('nome') || '';
-  elCpf.value = params.get('cpf') ? formatarCPF(params.get('cpf')) : '';
+  elCpf.value = params.get('cpf')? formatarCPF(params.get('cpf')) : '';
   elDesc.value = params.get('desc') || 'Pague sua mensalidade para navegar';
-  
+
   atualizarTudo();
 });
 </script>
