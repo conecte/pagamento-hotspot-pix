@@ -35,11 +35,6 @@ body {
   box-shadow: var(--sombra);
   overflow: hidden;
   border: 1px solid var(--cor-borda);
-  animation: surgir 0.4s ease-out;
-}
-@keyframes surgir {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 .cabecalho {
   background: linear-gradient(135deg, var(--cor-primaria) 0%, #10b981 100%);
@@ -115,6 +110,8 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
   margin: 0 auto 12px;
   width: fit-content;
+  min-height: 360px;
+  min-width: 360px;
 }
 #qr-canvas img { display: block; }
 .aviso { font-size: 0.8rem; color: var(--cor-texto-suave); margin-top: 8px; }
@@ -135,27 +132,12 @@ body {
   gap: 8px;
   text-decoration: none;
 }
-.botao:hover {
-  background: var(--cor-primaria-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-}
-.botao-whatsapp {
-  background: #25D366;
-  margin-top: 12px;
-}
-.botao-whatsapp:hover {
-  background: #128C7E;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-}
+.botao:hover { background: var(--cor-primaria-hover); transform: translateY(-1px); }
 .botao-pago {
   background: #3b82f6;
   margin-top: 12px;
 }
-.botao-pago:hover {
-  background: #2563eb;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
+.botao-pago:hover { background: #2563eb; }
 .instrucao-comprovante {
   background: #eff6ff;
   border: 2px solid #3b82f6;
@@ -233,7 +215,7 @@ body { padding: 12px; }
         <input type="text" id="nome" placeholder="Digite seu nome completo">
       </div>
 
-      <div class="campo">
+      <div class="campo" id="campo-valor">
         <label for="valor">Valor</label>
         <input type="text" id="valor" placeholder="0,00">
       </div>
@@ -264,7 +246,7 @@ body { padding: 12px; }
         <strong>📸 Como enviar o comprovante:</strong>
         <ol>
           <li>Pague no app do seu banco</li>
-          <li>Na tela de "Pagamento concluído", tire um PRINT</li>
+          <li>Na tela "Pagamento concluído", tire um PRINT</li>
           <li>Clique no botão azul abaixo "Já Paguei"</li>
           <li>Anexe o print e envie no WhatsApp</li>
         </ol>
@@ -307,9 +289,10 @@ const elCodigo = document.getElementById('codigo');
 const elMsg = document.getElementById('mensagem');
 const qrContainer = document.getElementById('qr-canvas');
 const btnPago = document.getElementById('btn-pago');
+const campoValor = document.getElementById('campo-valor');
 
 function formatarMoeda(valor) {
-  const num = parseFloat(valor.replace(',', '.')) || 0;
+  const num = parseFloat(valor.toString().replace(',', '.')) || 0;
   return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
@@ -346,7 +329,9 @@ function montarCampo(id, valor) {
 }
 
 function gerarCodigoPix() {
-  const valorNum = parseFloat(elValor.value.replace(',', '.')) || 0;
+  // CORRIGIDO: Aceita 3, 3.00, 3,00
+  let valorStr = elValor.value.toString().replace(',', '.');
+  const valorNum = parseFloat(valorStr) || 0;
   const valorFormatado = valorNum.toFixed(2);
 
   const nome = limparString(elNome.value || PIX_CONFIG.nome);
@@ -378,11 +363,10 @@ function gerarCodigoPix() {
   const codigoFinal = payload + crc;
 
   elCodigo.value = codigoFinal;
-  elValorTela.textContent = formatarMoeda(elValor.value);
+  elValorTela.textContent = formatarMoeda(valorNum);
 
-  // Atualiza link do botão "Já Paguei"
   const nomeCliente = elNome.value || 'Cliente';
-  const valorMsg = formatarMoeda(elValor.value);
+  const valorMsg = formatarMoeda(valorNum);
   const msg = *PAGAMENTO PIX REALIZADO*%0A%0A*Nome:* ${nomeCliente}%0A*Valor:* ${valorMsg}%0A%0A_Por favor, anexe o print do comprovante do seu banco aqui na conversa._%0A%0AObrigado!;
   btnPago.href = https://wa.me/${PIX_CONFIG.whatsapp}?text=${msg};
 
@@ -391,6 +375,7 @@ function gerarCodigoPix() {
 
 function desenharQRCode(texto) {
   qrContainer.innerHTML = "";
+  if (!texto || texto.length < 10) return;
   new QRCode(qrContainer, {
     text: texto,
     width: 320,
@@ -407,6 +392,7 @@ elValor.addEventListener('input', (e) => {
   if (partes.length > 2) v = partes[0] + ',' + partes.slice(1).join('');
   if (partes[1] && partes[1].length > 2) v = partes[0] + ',' + partes[1].substring(0, 2);
   e.target.value = v;
+  atualizarTudo();
 });
 
 function atualizarTudo() {
@@ -414,7 +400,7 @@ function atualizarTudo() {
     const codigo = gerarCodigoPix();
     desenharQRCode(codigo);
   } catch (erro) {
-    mostrarMensagem('Não foi possível gerar o pagamento');
+    console.log('Erro:', erro);
   }
 }
 
@@ -427,19 +413,30 @@ document.getElementById('btn-copiar').addEventListener('click', () => {
   } catch (e) {
     navigator.clipboard.writeText(elCodigo.value).then(() => {
       mostrarMensagem('Código PIX copiado com sucesso!');
-    }).catch(() => {
-      mostrarMensagem('Não foi possível copiar');
     });
   }
 });
 
 elNome.addEventListener('input', atualizarTudo);
-elValor.addEventListener('input', atualizarTudo);
 elDesc.addEventListener('input', atualizarTudo);
 
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  elValor.value = params.get('valor') || '200,00';
+  const valorURL = params.get('valor');
+
+  // CORRIGIDO: Aceita?valor=3 ou?valor=3.00 ou?valor=3,00
+  if (valorURL) {
+    let valorLimpo = valorURL.replace(',', '.');
+    elValor.value = valorLimpo;
+    // Trava o campo quando vem da URL
+    elValor.readOnly = true;
+    elValor.style.background = '#e5e7eb';
+    elValor.style.cursor = 'not-allowed';
+    campoValor.style.display = 'none'; // Esconde o campo
+  } else {
+    elValor.value = '0,00';
+  }
+
   elNome.value = params.get('nome') || '';
   elDesc.value = params.get('desc') || 'Mensalidade Internet';
   atualizarTudo();
