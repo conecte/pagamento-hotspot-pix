@@ -222,9 +222,9 @@ body {
   background: #f8fafc;
 }
 @media (max-width: 480px) {
- .cabecalho { padding: 24px 20px; }
- .conteudo { padding: 20px; }
- .valor-destaque.numero { font-size: 1.75rem; }
+.cabecalho { padding: 24px 20px; }
+.conteudo { padding: 20px; }
+.valor-destaque.numero { font-size: 1.75rem; }
   body { padding: 12px; }
 }
 </style>
@@ -303,7 +303,7 @@ whattsaAp 97984028177 </div>
 // --- Configuração PIX Fixa ---
 const PIX_CONFIG = {
   chave: 'turboconnect01@gmail.com',
-  nome: 'TURBOCONNECT',
+  nome: 'TURBO CONNECT',
   cidade: 'TABATINGA'
 };
 
@@ -339,7 +339,7 @@ function limparString(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').toUpperCase().substring(0, 25);
 }
 
-// --- Gerador EMV BR Code PIX ---
+// --- Gerador EMV BR Code PIX CORRIGIDO ---
 function gerarCrc16(payload) {
   let polinomio = 0x1021;
   let resultado = 0xFFFF;
@@ -369,11 +369,12 @@ function gerarCodigoPix() {
   const nome = limparString(elNome.value || PIX_CONFIG.nome);
   const cidade = limparString(PIX_CONFIG.cidade);
   const chave = PIX_CONFIG.chave;
-  const descricao = limparString(elDesc.value || 'PAGAMENTO');
+  const descricao = limparString(elDesc.value || '');
 
   let payload = '';
   payload += montarCampo('00', '01');
-  payload += montarCampo('01', '12');
+  // CORREÇÃO: 11 = QR estático reutilizável. 12 é pra QR dinâmico com banco
+  payload += montarCampo('01', '11');
 
   let gui = montarCampo('00', 'BR.GOV.BCB.PIX');
   gui += montarCampo('01', chave);
@@ -386,7 +387,10 @@ function gerarCodigoPix() {
   payload += montarCampo('58', 'BR');
   payload += montarCampo('59', nome);
   payload += montarCampo('60', cidade);
-  payload += montarCampo('62', montarCampo('05', '*'));
+
+  // CORREÇÃO: TxId válido. Alguns bancos rejeitam *
+  const txid = Date.now().toString().substring(0, 25);
+  payload += montarCampo('62', montarCampo('05', txid));
 
   payload += '6304';
   const crc = gerarCrc16(payload);
@@ -397,7 +401,7 @@ function gerarCodigoPix() {
   return codigoFinal;
 }
 
-// --- QR Code CORRIGIDO - Agora escaneia ---
+// --- QR Code CORRIGIDO ---
 function desenharQRCode(texto) {
   qrContainer.innerHTML = "";
   qrcodeObj = new QRCode(qrContainer, {
@@ -406,7 +410,7 @@ function desenharQRCode(texto) {
     height: 320,
     colorDark: "#000000",
     colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
+    correctLevel: QRCode.CorrectLevel.M
   });
 }
 
