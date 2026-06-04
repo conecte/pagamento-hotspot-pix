@@ -110,7 +110,7 @@ body {
   min-width: 320px;
   min-height: 320px;
 }
-#qr-canvas img { display: block; }
+#qr-canvas canvas, #qr-canvas img { display: block; }
 .aviso { font-size: 0.8rem; color: var(--cor-texto-suave); margin-top: 8px; }
 .botao {
   width: 100%;
@@ -183,6 +183,7 @@ body {
   border-top: 1px solid var(--cor-borda);
   background: #f8fafc;
 }
+.erro { background: #fef2f2; color: #dc2626; padding: 10px; border-radius: 8px; text-align: center; margin: 10px 0; display: none; }
 </style>
 </head>
 <body>
@@ -197,9 +198,16 @@ body {
     </div>
 
     <div class="conteudo">
+      <div id="erro-valor" class="erro">Digite um valor válido</div>
+
       <div class="campo">
         <label for="nome">Nome completo</label>
         <input type="text" id="nome" placeholder="Digite seu nome">
+      </div>
+
+      <div class="campo">
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
       </div>
 
       <div class="campo" id="campo-valor">
@@ -229,12 +237,13 @@ body {
       </button>
 
       <div class="instrucao-comprovante">
-        <strong>📸 Como enviar o comprovante:</strong>
+        <strong>📸 ATENÇÃO: Como enviar o comprovante</strong>
         <ol>
-          <li>Pague no app do seu banco</li>
+          <li>Faça o pagamento no app do seu banco</li>
           <li>Tire PRINT da tela "Pagamento concluído"</li>
+          <li>VOLTE PARA ESTE SITE</li>
           <li>Clique em "Já Paguei" abaixo</li>
-          <li>Anexe o print no WhatsApp</li>
+          <li>Anexe o print no WhatsApp que vai abrir</li>
         </ol>
       </div>
 
@@ -267,6 +276,7 @@ const PIX_CONFIG = {
 };
 
 const elNome = document.getElementById('nome');
+const elCpf = document.getElementById('cpf');
 const elValor = document.getElementById('valor');
 const elDesc = document.getElementById('desc');
 const elValorTela = document.getElementById('valor-tela');
@@ -275,11 +285,17 @@ const elMsg = document.getElementById('mensagem');
 const qrContainer = document.getElementById('qr-canvas');
 const btnPago = document.getElementById('btn-pago');
 const campoValor = document.getElementById('campo-valor');
+const erroValor = document.getElementById('erro-valor');
 
 function formatarMoeda(valor) {
   let num = parseFloat(valor.toString().replace(',', '.'));
-  if (isNaN(num)) num = 0;
+  if (isNaN(num) || num < 0) num = 0;
   return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function formatarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '');
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
 function mostrarMensagem(texto) {
@@ -317,7 +333,15 @@ function montarCampo(id, valor) {
 function gerarCodigoPix() {
   let valorStr = elValor.value.toString().replace(',', '.');
   let valorNum = parseFloat(valorStr);
-  if (isNaN(valorNum) || valorNum <= 0) valorNum = 0;
+
+  if (isNaN(valorNum) || valorNum <= 0) {
+    erroValor.style.display = 'block';
+    elCodigo.value = '';
+    elValorTela.textContent = 'R$ 0,00';
+    qrContainer.innerHTML = '';
+    return '';
+  }
+  erroValor.style.display = 'none';
 
   const valorFormatado = valorNum.toFixed(2);
   const nome = limparString(elNome.value || PIX_CONFIG.nome);
@@ -336,7 +360,7 @@ function gerarCodigoPix() {
 
   payload += montarCampo('52', '0000');
   payload += montarCampo('53', '986');
-  if (valorNum > 0) payload += montarCampo('54', valorFormatado);
+  payload += montarCampo('54', valorFormatado);
   payload += montarCampo('58', 'BR');
   payload += montarCampo('59', nome);
   payload += montarCampo('60', cidade);
@@ -376,6 +400,12 @@ function desenharQRCode(texto) {
   }
 }
 
+elCpf.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  e.target.value = formatarCPF(v);
+  atualizarTudo();
+});
+
 elValor.addEventListener('input', (e) => {
   let v = e.target.value.replace(/[^\d,]/g, '');
   const partes = v.split(',');
@@ -387,10 +417,14 @@ elValor.addEventListener('input', (e) => {
 
 function atualizarTudo() {
   const codigo = gerarCodigoPix();
-  desenharQRCode(codigo);
+  if (codigo) desenharQRCode(codigo);
 }
 
 document.getElementById('btn-copiar').addEventListener('click', () => {
+  if (!elCodigo.value) {
+    mostrarMensagem('Digite um valor primeiro!');
+    return;
+  }
   elCodigo.select();
   elCodigo.setSelectionRange(0, 99999);
   try {
@@ -422,9 +456,10 @@ window.addEventListener('load', () => {
   }
 
   elNome.value = params.get('nome') || '';
+  elCpf.value = params.get('cpf')? formatarCPF(params.get('cpf')) : '';
   elDesc.value = params.get('desc') || 'Mensalidade Internet';
 
-  setTimeout(atualizarTudo, 100);
+  setTimeout(atualizarTudo, 200);
 });
 </script>
 </body>
